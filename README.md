@@ -9,6 +9,7 @@
 - better blending (custom shader?? canvas -> to texture)
 - saving location
 - search box to zoom in on places
-    
+
 #### ideas
 - no side maps, only center map
+- collage: make a jigsaw puzzle out of bits of your favorite cities
