@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title> cityfit </title>
+  <!-- css -->
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.css' rel='stylesheet' />
+</head>
+
+<body>
+    <div>
+        <div id='mapL' style='width: 400px; height: 400px; display: inline-block;'></div>
+        <div style='width: 400px; height: 400px; position: relative; display: inline-block;'>
+            <div id='mapLeftOverlay' style='width: 400px; height: 400px; position: absolute; left: 0; top: 0; '></div>
+            <div id='mapRightOverlay' style='width: 400px; height: 400px; position: absolute; left: 0; top: 0; mix-blend-mode: difference;'></div>
+        </div>
+        <div id='mapR' style='width: 400px; height: 400px; display: inline-block;'></div>
+    </div>
+    <script>
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic3VwZXJtZWRpYWFydCIsImEiOiJjam10OWticXAyZTJhM3FrNGFrb3dpOXgyIn0.li2QBM8FbfviP2ZtXDOe-w';
+    var mapStyle = 'mapbox://styles/mapbox/light-v9';
+    var mapL = new mapboxgl.Map({
+        container: 'mapL',
+        style: mapStyle
+    });
+    var mapR = new mapboxgl.Map({
+        container: 'mapR',
+        style: mapStyle
+    });
+    var mapLeftOverlay = new mapboxgl.Map({
+        // interactive: false,
+        container: 'mapLeftOverlay',
+        style: mapStyle
+    });
+    var mapRightOverlay = new mapboxgl.Map({
+        // interactive: false,
+        container: 'mapRightOverlay',
+        style: mapStyle
+    });
+
+    mapL.on("load", ()=>{
+        mapR.on("load", ()=>{
+            mapL.on("zoom", ()=>{
+                console.log("left zoomed ", mapL.getZoom())
+                setZoom(mapL.getZoom())
+            })
+            mapR.on("zoom", ()=>{
+                console.log("right zoomed ", mapR.getZoom())
+                setZoom(mapR.getZoom())
+            })
+            mapL.on("drag", ()=>{
+                mapLeftOverlay.setCenter(mapL.getCenter());
+            })
+            mapR.on("drag", ()=>{
+                mapRightOverlay.setCenter(mapR.getCenter());
+            })
+        })
+    })
+
+    function setZoom(zoom) {
+        mapR.setZoom(zoom)
+        mapL.setZoom(zoom)
+        mapLeftOverlay.setZoom(zoom)
+        mapRightOverlay.setZoom(zoom)
+    }
+    </script>
+</body>
+
+</html>
