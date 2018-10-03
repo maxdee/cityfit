@@ -10,13 +10,31 @@
 </head>
 
 <body>
+    <svg class="defs-only">
+      <filter id="colorizeLeft" color-interpolation-filters="sRGB"
+              x="0" y="0" height="100%" width="100%">
+        <feColorMatrix type="matrix"
+          values="0.00 0 0 0  0
+                  0.00 0 0 0  0
+                  1.00 0 0 0  0
+                    0  0 0 1  0" />
+      </filter>
+      <filter id="colorizeRight" color-interpolation-filters="sRGB"
+              x="0" y="0" height="100%" width="100%">
+        <feColorMatrix type="matrix"
+          values="0.00 0 0 0  0
+                  1.00 0 0 0  0
+                  0.00 0 0 0  0
+                    0  0 0 1  0" />
+      </filter>
+    </svg>
     <div>
-        <div id='mapL' style='width: 400px; height: 400px; display: inline-block;'></div>
+        <div id='mapL' style='width: 400px; height: 400px; display: inline-block;filter: brightness(0.6) contrast(8) invert(1) url(#colorizeLeft);'></div>
         <div style='width: 400px; height: 400px; position: relative; display: inline-block;'>
-            <div id='mapLeftOverlay' style='width: 400px; height: 400px; position: absolute; left: 0; top: 0; '></div>
-            <div id='mapRightOverlay' style='width: 400px; height: 400px; position: absolute; left: 0; top: 0; mix-blend-mode: difference;'></div>
+            <div id='mapLeftOverlay' style='width: 400px; height: 400px; position: absolute; left: 0; top: 0; filter: brightness(0.6) contrast(8) invert(1) url(#colorizeLeft);'></div>
+            <div id='mapRightOverlay' style='width: 400px; height: 400px; position: absolute; left: 0; top: 0; filter: brightness(0.6) contrast(8) invert(1) url(#colorizeRight); mix-blend-mode: screen;'></div>
         </div>
-        <div id='mapR' style='width: 400px; height: 400px; display: inline-block;'></div>
+        <div id='mapR' style='width: 400px; height: 400px; display: inline-block;filter: brightness(0.6) contrast(8) invert(1) url(#colorizeRight);'></div>
     </div>
     <script>
     mapboxgl.accessToken = 'pk.eyJ1Ijoic3VwZXJtZWRpYWFydCIsImEiOiJjam10OWticXAyZTJhM3FrNGFrb3dpOXgyIn0.li2QBM8FbfviP2ZtXDOe-w';
@@ -42,19 +60,23 @@
 
     mapL.on("load", ()=>{
         mapR.on("load", ()=>{
-            mapL.on("zoom", ()=>{
-                console.log("left zoomed ", mapL.getZoom())
-                setZoom(mapL.getZoom())
-            })
-            mapR.on("zoom", ()=>{
-                console.log("right zoomed ", mapR.getZoom())
-                setZoom(mapR.getZoom())
-            })
-            mapL.on("drag", ()=>{
-                mapLeftOverlay.setCenter(mapL.getCenter());
-            })
-            mapR.on("drag", ()=>{
-                mapRightOverlay.setCenter(mapR.getCenter());
+            mapLeftOverlay.on("load", ()=>{
+                mapRightOverlay.on("load", ()=>{
+                    mapL.on("zoom", ()=>{
+                        console.log("left zoomed ", mapL.getZoom())
+                        setZoom(mapL.getZoom())
+                    })
+                    mapR.on("zoom", ()=>{
+                        console.log("right zoomed ", mapR.getZoom())
+                        setZoom(mapR.getZoom())
+                    })
+                    mapL.on("drag", ()=>{
+                        mapLeftOverlay.setCenter(mapL.getCenter());
+                    })
+                    mapR.on("drag", ()=>{
+                        mapRightOverlay.setCenter(mapR.getCenter());
+                    })
+                })
             })
         })
     })
